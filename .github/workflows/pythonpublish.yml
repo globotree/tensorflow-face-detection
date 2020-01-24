@@ -1,0 +1,38 @@
+name: Upload Python Package
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Set up Python
+      uses: actions/setup-python@v1
+      with:
+        python-version: '3.x'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install setuptools wheel twine
+    - name: Build and publish
+      env:
+        TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
+        TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
+      run: |- name: Setup .NET Core SDK
+  uses: actions/setup-dotnet@v1.4.0
+  with:
+    # SDK version to use. Example: 2.2.104
+    dotnet-version: # optional
+    # Optional package source for which to set up authentication. Will consult any existing NuGet.config in the root of the repo and provide a temporary NuGet.config using the NUGET_AUTH_TOKEN environment variable as a ClearTextPassword
+    source-url: # optional
+    # Optional OWNER for using packages from GitHub Package Registry organizations/users other than the current repository's owner. Only used if a GPR URL is also provided in source-url
+    owner: # optional
+    # Optional NuGet.config location, if your NuGet.config isn't located in the root of the repo.
+    config-file: # optional
+    # Deprecated. Use dotnet-version instead. Will not be supported after October 1, 2019
+    version: # optional
+        python setup.py sdist bdist_wheel
+        twine upload dist/*
